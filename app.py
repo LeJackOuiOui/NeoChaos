@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route("/aplicar-descuento", methods=["POST"])
 def aplicar_descuento():
-    datos = request.json
+    datos = request.json or {}
     usuario_id = datos.get("usuario_id", "000")
     tarea = procesar_descuento.delay(usuario_id)
 
@@ -27,11 +27,28 @@ def aplicar_descuento():
 def verificar_estado(task_id):
     tarea = celery_app.AsyncResult(task_id)
     if tarea.state == "PENDING":
-        return jsonify({"status": "Aún en la cola de tickets"}), 200
+        return (
+            jsonify({"status": "Aún en la cola de tickets", "state": tarea.state}),
+            200,
+        )
     elif tarea.state == "SUCCESS":
-        return jsonify({"status": "Completado", "resultado": tarea.result}), 200
+        return (
+            jsonify(
+                {
+                    "status": "Completado",
+                    "resultado": tarea.result,
+                    "state": tarea.state,
+                }
+            ),
+            200,
+        )
     else:
-        return jsonify({"status": "Falló"}), 500
+        return (
+            jsonify(
+                {"status": "Falló", "error": str(tarea.info), "state": tarea.state}
+            ),
+            500,
+        )
 
 
 @app.route("/health")

@@ -62,6 +62,17 @@ services:
         limits:
           cpus: "0.50"
 
+  flower:
+    image: mher/flower:1.2.0
+    container_name: celery-flower
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery-worker
+    restart: always
+
   log-viewer:
     image: amir20/dozzle:latest
     container_name: dozzle-logs
