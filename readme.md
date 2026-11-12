@@ -21,4 +21,4 @@ Actividad 4 (4/11/2026 y 5/11/2026)
 
 Actividad 5 (11/11/2026)
 
-- Documentación de implementación e instalación del proyecto (`docs/celery_y_flower`)
+- Pruebas de estres utilizando Celery y su dashboard, Flower (`docs/celery_y_flower`)
