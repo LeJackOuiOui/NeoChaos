@@ -16,22 +16,31 @@ services:
           cpus: "0.10"
           memory: 64M
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis-broker
+    ports:
+      - "6379:6379"
+
   api-backend:
     build: .
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
     expose:
       - "5000"
-
+    stop_grace_period: 15s
     healthcheck:
       test:
         [
           "CMD-SHELL",
           'python -c ''import urllib.request; urllib.request.urlopen("http://0.0.0.0:5000/health")'' || exit 1',
         ]
-      interval: 10s
+      interval: 5s
       timeout: 3s
       retries: 3
-      start_period: 15s
-
+      start_period: 10s
     deploy:
       replicas: 4
       update_config:
@@ -39,10 +48,19 @@ services:
         delay: 10s
         order: start-first
         failure_action: rollback
+
+  celery-worker:
+    build: .
+    container_name: worker-descuentos
+    command: celery -A tareas worker --loglevel=info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    deploy:
       resources:
         limits:
-          cpus: "0.15"
-          memory: 256M
+          cpus: "0.50"
 
   log-viewer:
     image: amir20/dozzle:latest
