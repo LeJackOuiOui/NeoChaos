@@ -1,4 +1,7 @@
-Flask
+Flask==3.0.3
 locust
-gunicorn
+gunicorn==22.0.0
 requests
+celery==5.3.6
+redis
+flower==1.2.0
