@@ -15,7 +15,7 @@ Actividad 3 (22/10/2026)
 
 - Colapsos y bucles de reinicio de replicas (`docs/colapso_bucle`)
 
-Actividad 4 (4/11/2026)
+Actividad 4 (4/11/2026 y 5/11/2026)
 
 - Documentación de implementación e instalación del proyecto (`docs/implementacion`)
 
